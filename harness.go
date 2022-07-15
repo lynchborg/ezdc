@@ -12,7 +12,7 @@ import (
 )
 
 func info(msg string) {
-	log.Println("#### DCHAR #### " + msg)
+	log.Println("#### DCTEST #### " + msg)
 }
 
 // Service configures options for a service defined in the docker compose file

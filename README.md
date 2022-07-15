@@ -1,8 +1,8 @@
-# Dchar - Docker Compose Harness
+# DC Test - Docker Compose Test Harness
 
 For easily setting up tests that rely on services in a docker-compose.yml
 
-Wrap you `m.Run()` and `dchar` will take care of spinning up your containers and checking that they're ready before
+Wrap you `m.Run()` and `dctest` will take care of spinning up your containers and checking that they're ready before
 running your tests.
 
 Have a look in the [./examples](./examples) dir for runnable tests.
@@ -15,20 +15,20 @@ package my_test
 import (
 	"os"
 	"testing"
-	"github.com/byrnedo/dchar"
+	"github.com/byrnedo/dctest"
 )
 
 func TestMain(m *testing.M) {
 
-	h := dchar.Harness{
-		ProjectName: "dchar-example",
-		Services: []dchar.Service{
+	h := dctest.Harness{
+		ProjectName: "dctest-example",
+		Services: []dctest.Service{
 			{
 				Name: "nats",
 				// will pull before starting tests
 				Pull: true,
 				// will wait for nats to listen on localhost:4222
-				Waiter: dchar.TcpWaiter{
+				Waiter: dctest.TcpWaiter{
 					Port: 14222,
 				},
 			},
