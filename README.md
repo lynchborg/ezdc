@@ -1,4 +1,4 @@
-# DC Test - Docker Compose Test Harness
+# EZDC -  Easy Testing With Docker Compose
 
 For easily setting up tests that rely on services in a docker-compose.yml
 
@@ -15,7 +15,7 @@ Do you want your tests to be setup with:
 
 Yes? Then we've got you covered. No? Make a P.R.
 
-Wrap you `m.Run()` and `dctest` will take care of spinning up your containers and checking that they're ready before
+Wrap you `m.Run()` and `ezdc` will take care of spinning up your containers and checking that they're ready before
 running your tests.
 
 Have a look in the [./examples](./examples) dir for runnable tests.
@@ -28,20 +28,20 @@ package my_test
 import (
 	"os"
 	"testing"
-	"github.com/byrnedo/dctest"
+	"github.com/byrnedo/ezdc"
 )
 
 func TestMain(m *testing.M) {
 
-	h := dctest.Harness{
-		ProjectName: "dctest-example",
-		Services: []dctest.Service{
+	h := ezdc.Harness{
+		ProjectName: "ezdc-example",
+		Services: []ezdc.Service{
 			{
 				Name: "nats",
 				// will pull before starting tests
 				Pull: true,
 				// will wait for nats to listen on localhost:4222
-				Waiter: dctest.TcpWaiter{
+				Waiter: ezdc.TcpWaiter{
 					Port: 14222,
 				},
 			},

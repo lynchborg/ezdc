@@ -1,4 +1,4 @@
-package dctest
+package ezdc
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 )
 
 func info(msg string) {
-	log.Println("#### DCTEST #### " + msg)
+	log.Println("#### EZDC #### " + msg)
 }
 
 // Service configures options for a service defined in the docker compose file

@@ -6,19 +6,19 @@ import (
 	"os"
 	"testing"
 
-	"github.com/byrnedo/dctest"
+	"github.com/byrnedo/ezdc"
 )
 
 func TestMain(m *testing.M) {
 	fmt.Println("start")
 
-	h := dctest.Harness{
-		ProjectName: "dctest-simple",
-		Services: []dctest.Service{
+	h := ezdc.Harness{
+		ProjectName: "ezdc-simple",
+		Services: []ezdc.Service{
 			{
 				Name: "nats",
 				Pull: true,
-				Waiter: dctest.TcpWaiter{
+				Waiter: ezdc.TcpWaiter{
 					Port: 14222,
 				},
 			},

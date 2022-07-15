@@ -1,4 +1,4 @@
-package dctest
+package ezdc
 
 import (
 	"context"
