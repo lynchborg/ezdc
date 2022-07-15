@@ -1,4 +1,4 @@
-package dclogfile_test
+package logfile_test
 
 import (
 	"context"

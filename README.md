@@ -2,6 +2,13 @@
 
 For easily setting up tests that rely on services in a docker-compose.yml
 
+Wrap you `m.Run()` and `dchar` will take care of spinning up your containers and checking that they're ready before
+running your tests.
+
+Have a look in the [./examples](./examples) dir for runnable tests.
+
+## Usage
+
 ```go
 package my_test
 
@@ -44,3 +51,29 @@ func TestMain(m *testing.M) {
 	os.Exit(c)
 }
 ```
+
+## Configuration
+
+### Harness
+
+| Setting     |                                                                 |
+|-------------|-----------------------------------------------------------------|
+| ProjectName | The project name to give to docker-compose. Required            | 
+| File        | Path to docker-compose file. Defaults to ./docker-compose.yml   |
+| Services    | Configuration of services. Optional.                            |
+| Logs        | Where to send the docker-compose output. Defaults to os.Stdout. |
+
+### Services
+
+| Setting |                                                                                                                   |
+|---------|-------------------------------------------------------------------------------------------------------------------|
+| Name    | Name of the service. Doesn't necessarily have to match any in the docker compose file, but does if `Pull` is TRUE |
+| Pull    | Pull the image before running tests. Default is false.                                                            |
+| Waiter  | Configures how to declare your service 'ready'. Optional.                                                         |
+
+## Waiters
+
+Currently supports
+
+- Http (`HttpWaiter`)
+- Tcp (`TcpWaiter`)
