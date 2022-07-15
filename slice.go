@@ -1,4 +1,4 @@
-package dchar
+package dctest
 
 func gmap[T any, U any](t []T, f func(t T) U) (res []U) {
 	for _, item := range t {

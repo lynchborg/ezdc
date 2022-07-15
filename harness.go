@@ -1,4 +1,4 @@
-package dchar
+package dctest
 
 import (
 	"bytes"

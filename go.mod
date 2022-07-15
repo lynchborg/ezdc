@@ -1,3 +1,3 @@
-module github.com/byrnedo/dchar
+module github.com/byrnedo/dctest
 
 go 1.18

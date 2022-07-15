@@ -6,19 +6,19 @@ import (
 	"os"
 	"testing"
 
-	"github.com/byrnedo/dchar"
+	"github.com/byrnedo/dctest"
 )
 
 func TestMain(m *testing.M) {
 	fmt.Println("start")
 
-	h := dchar.Harness{
-		ProjectName: "dchar-simple",
-		Services: []dchar.Service{
+	h := dctest.Harness{
+		ProjectName: "dctest-simple",
+		Services: []dctest.Service{
 			{
 				Name: "nats",
 				Pull: true,
-				Waiter: dchar.TcpWaiter{
+				Waiter: dctest.TcpWaiter{
 					Port: 14222,
 				},
 			},
