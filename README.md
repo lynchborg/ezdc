@@ -2,6 +2,19 @@
 
 For easily setting up tests that rely on services in a docker-compose.yml
 
+Do you want your tests to be setup with:
+
+- `docker compose pull`
+- `docker compose build`
+- `docker compose up`
+- Some logic to know containers are ready
+- YOUR TESTS HERE
+
+  Followed by
+- `docker compose down` ?
+
+Yes? Then we've got you covered. No? Make a P.R.
+
 Wrap you `m.Run()` and `dctest` will take care of spinning up your containers and checking that they're ready before
 running your tests.
 
