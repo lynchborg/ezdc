@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/byrnedo/ezdc"
 )
@@ -35,5 +36,6 @@ func TestMain(m *testing.M) {
 
 func TestNothing(t *testing.T) {
 	// whoop
+	time.Sleep(10 * time.Second)
 	t.Log("NOTHING")
 }

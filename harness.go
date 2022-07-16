@@ -11,8 +11,12 @@ import (
 	"time"
 )
 
-func info(msg string) {
-	log.Println("#### EZDC #### " + msg)
+func infoLog(msg string) {
+	log.Println("#### EZDC #### INFO " + msg)
+}
+
+func errorLog(msg string) {
+	log.Println("#### EZDC #### ERROR " + msg)
 }
 
 // Service configures options for a service defined in the docker compose file
@@ -76,7 +80,7 @@ func (h *Harness) Run(ctx context.Context, f func() int) (int, error) {
 		return 1, err
 	}
 
-	info("services ready")
+	infoLog("services ready")
 
 	defer func() {
 		h.cleanup(10 * time.Second)
@@ -126,7 +130,7 @@ func (h Harness) waitForServices(ctx context.Context) error {
 	})
 
 	for _, svc := range toWaitFor {
-		info(fmt.Sprintf("waiting for '%s'...\n", svc.Name))
+		infoLog(fmt.Sprintf("waiting for '%s'...\n", svc.Name))
 		if err := svc.Waiter.Wait(ctx); err != nil {
 			return err
 		}
@@ -139,8 +143,8 @@ func (h *Harness) CleanupFunc(f func(context.Context)) {
 	h.cleanerUppers = append(h.cleanerUppers, f)
 }
 
-func (h Harness) cleanup(timeout time.Duration) error {
-	info("cleaning up")
+func (h Harness) cleanup(timeout time.Duration) {
+	infoLog("cleaning up")
 
 	ctx, cncl := context.WithTimeout(context.Background(), timeout)
 	defer cncl()
@@ -149,5 +153,7 @@ func (h Harness) cleanup(timeout time.Duration) error {
 		f(ctx)
 	}
 
-	return h.cc.down(ctx)
+	if err := h.cc.down(ctx); err != nil {
+		errorLog(fmt.Sprintf("failed to run 'down': %s", err))
+	}
 }

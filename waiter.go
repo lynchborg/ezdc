@@ -52,7 +52,7 @@ func (tw TcpWaiter) Wait(ctx context.Context) error {
 		if errors.Is(err, context.DeadlineExceeded) {
 			return err
 		}
-		info(fmt.Sprintf(" failed to connect: '%s'", err))
+		infoLog(fmt.Sprintf(" failed to connect: '%s'", err))
 		time.Sleep(interval)
 	}
 
@@ -110,7 +110,7 @@ func (hw HttpWaiter) Wait(ctx context.Context) error {
 			if find(readyStatus, res.StatusCode) {
 				return nil
 			}
-			info(fmt.Sprintf("failed to connect: status='%d'", res.StatusCode))
+			infoLog(fmt.Sprintf("failed to connect: status='%d'", res.StatusCode))
 			continue
 		}
 
@@ -118,7 +118,7 @@ func (hw HttpWaiter) Wait(ctx context.Context) error {
 			return err
 		}
 
-		info(fmt.Sprintf("failed to connect: err='%s'", err))
+		infoLog(fmt.Sprintf("failed to connect: err='%s'", err))
 	}
 
 }
