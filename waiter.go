@@ -36,7 +36,8 @@ func (tw TcpWaiter) Wait(ctx context.Context) error {
 	if timeout == 0 {
 		timeout = 2 * time.Second
 	}
-	for {
+
+	for i := 0; ; i++ {
 
 		d := net.Dialer{
 			Timeout: timeout,
@@ -47,6 +48,7 @@ func (tw TcpWaiter) Wait(ctx context.Context) error {
 			_ = c.Close()
 			return nil
 		}
+
 		if errors.Is(err, context.DeadlineExceeded) {
 			return err
 		}
@@ -89,7 +91,10 @@ func (hw HttpWaiter) Wait(ctx context.Context) error {
 	}
 	u := hw.url()
 
-	for {
+	for i := 0; ; i++ {
+		if i > 0 {
+			time.Sleep(interval)
+		}
 		var (
 			res *http.Response
 			err error
@@ -101,18 +106,19 @@ func (hw HttpWaiter) Wait(ctx context.Context) error {
 			req = req.WithContext(ctx)
 			res, err = http.DefaultClient.Do(req)
 		}()
-		if err != nil {
-			if errors.Is(err, context.DeadlineExceeded) {
-				return err
+		if err == nil {
+			if find(readyStatus, res.StatusCode) {
+				return nil
 			}
-			info(fmt.Sprintf("failed to connect: err='%s'", err))
-			//_, _ = fmt.Fprintf(os.Stderr, "%s - %s\n", name, err)
-		} else if find(readyStatus, res.StatusCode) {
-			return nil
-		} else {
 			info(fmt.Sprintf("failed to connect: status='%d'", res.StatusCode))
+			continue
 		}
-		time.Sleep(interval)
+
+		if errors.Is(err, context.DeadlineExceeded) {
+			return err
+		}
+
+		info(fmt.Sprintf("failed to connect: err='%s'", err))
 	}
 
 }
