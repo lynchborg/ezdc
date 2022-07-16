@@ -1,4 +1,4 @@
-# EZDC -  Easy Testing With Docker Compose
+# EZDC - Easy Testing With Docker Compose
 
 For easily setting up tests that rely on services in a docker-compose.yml
 
@@ -48,16 +48,14 @@ func TestMain(m *testing.M) {
 		},
 	}
 
-	c := 0
 	// h.Run does
 	// - down (removes volumes)
 	// - pull (for any configured services with Pull = TRUE)
 	// - build
 	// - up
 	// And when the callback is finished, will run down
-	if err := h.Run(context.Background(), func() {
-		c = m.Run()
-	}); err != nil {
+	c, err := h.Run(context.Background(), m.Run)
+	if err != nil {
 		panic(err)
 	}
 

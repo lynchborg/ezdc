@@ -47,13 +47,14 @@ type Harness struct {
 //
 // func TestMain(m *testing.M) {
 //     h := Harness{.....} // configure
-//     exitCode := 0
-//     h.Run(ctx, func() {
-//         exitCode = m.Run()
-//     })
+//
+//     exitCode, err := h.Run(context.Background(), m.Run)
+//     if err != nil {
+//         panic(err)
+//     }
 //     os.Exit(exitCode)
 // }
-func (h *Harness) Run(ctx context.Context, f func()) error {
+func (h *Harness) Run(ctx context.Context, f func() int) (int, error) {
 
 	h.termSig = make(chan os.Signal)
 
@@ -68,11 +69,11 @@ func (h *Harness) Run(ctx context.Context, f func()) error {
 	signal.Notify(h.termSig, os.Interrupt)
 
 	if err := h.startDcServices(ctx); err != nil {
-		return err
+		return 1, err
 	}
 
 	if err := h.waitForServices(ctx); err != nil {
-		return err
+		return 1, err
 	}
 
 	info("services ready")
@@ -80,10 +81,9 @@ func (h *Harness) Run(ctx context.Context, f func()) error {
 	defer func() {
 		h.cleanup(10 * time.Second)
 	}()
-	f()
-
-	return nil
+	return f(), nil
 }
+
 func (h Harness) startDcServices(ctx context.Context) error {
 	_ = h.cc.down(ctx)
 

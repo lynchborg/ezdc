@@ -26,12 +26,8 @@ func TestMain(m *testing.M) {
 		},
 	}
 
-	c := 0
-	if err := h.Run(context.Background(), func() {
-		// NOTE: don't call os.Exit in here
-		// IF you do, the test main will hang indefinitely
-		c = m.Run()
-	}); err != nil {
+	c, err := h.Run(context.Background(), m.Run)
+	if err != nil {
 		// something went wrong with the test harness
 		panic(err)
 	}

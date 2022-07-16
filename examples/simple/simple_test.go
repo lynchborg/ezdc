@@ -25,10 +25,8 @@ func TestMain(m *testing.M) {
 		},
 	}
 
-	c := 0
-	if err := h.Run(context.Background(), func() {
-		c = m.Run()
-	}); err != nil {
+	c, err := h.Run(context.Background(), m.Run)
+	if err != nil {
 		panic(err)
 	}
 
