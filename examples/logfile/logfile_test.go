@@ -2,7 +2,6 @@ package logfile_test
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 
@@ -10,7 +9,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	fmt.Println("start")
 
 	h := ezdc.Harness{
 		ProjectName: "ezdc-simple",

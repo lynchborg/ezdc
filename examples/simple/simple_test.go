@@ -2,7 +2,6 @@ package simple
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -11,7 +10,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	fmt.Println("start")
 
 	h := ezdc.Harness{
 		ProjectName: "ezdc-simple",

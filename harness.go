@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"os/signal"
 	"time"
 )
@@ -87,9 +88,23 @@ func (h *Harness) Run(ctx context.Context, f func() int) (int, error) {
 	}()
 	return f(), nil
 }
+func (h Harness) withLogs(cmd *exec.Cmd) (*exec.Cmd, *bytes.Buffer) {
+
+	if h.Logs == nil {
+		h.Logs = os.Stdout
+	}
+
+	buf := &bytes.Buffer{}
+	cmd.Stdout = h.Logs
+	cmd.Stderr = io.MultiWriter(h.Logs, buf)
+	return cmd, buf
+}
 
 func (h Harness) startDcServices(ctx context.Context) error {
-	_ = h.cc.down(ctx)
+
+	infoLog("cleaning up lingering resources")
+	cmd, _ := h.withLogs(h.cc.down(ctx))
+	_ = cmd.Run()
 
 	toPull := gmap(
 		filter(h.Services, func(s Service) bool {
@@ -99,27 +114,30 @@ func (h Harness) startDcServices(ctx context.Context) error {
 			return s.Name
 		})
 
-	if err := h.cc.pull(ctx, toPull...); err != nil {
+	cmd, errBuf := h.withLogs(h.cc.pull(ctx, toPull...))
+
+	infoLog("pulling")
+	if err := cmd.Run(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
 		return fmt.Errorf("error pulling: %w", err)
 	}
 
-	if err := h.cc.build(ctx); err != nil {
+	cmd, errBuf = h.withLogs(h.cc.build(ctx))
+
+	infoLog("building")
+	if err := cmd.Run(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
 		return fmt.Errorf("error building: %w", err)
 	}
 
-	var buf bytes.Buffer
-	upCmd := h.cc.cmd(ctx, "up")
-	if h.Logs == nil {
-		h.Logs = os.Stdout
-	}
+	cmd, errBuf = h.withLogs(h.cc.up(ctx))
 
-	multiWriter := io.MultiWriter(h.Logs, &buf)
-	upCmd.Stdout = h.Logs
-	upCmd.Stderr = multiWriter
-
-	if err := upCmd.Start(); err != nil {
+	infoLog("starting")
+	if err := cmd.Start(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
 		return err
 	}
+
 	return nil
 }
 
@@ -153,7 +171,10 @@ func (h Harness) cleanup(timeout time.Duration) {
 		f(ctx)
 	}
 
-	if err := h.cc.down(ctx); err != nil {
+	cmd, errBuf := h.withLogs(h.cc.down(ctx))
+
+	if err := cmd.Run(); err != nil {
+		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
 		errorLog(fmt.Sprintf("failed to run 'down': %s", err))
 	}
 }
