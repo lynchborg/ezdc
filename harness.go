@@ -114,15 +114,16 @@ func (h Harness) startDcServices(ctx context.Context) error {
 			return s.Name
 		})
 
-	cmd, errBuf := h.withLogs(h.cc.pull(ctx, toPull...))
-
-	infoLog("pulling")
-	if err := cmd.Run(); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
-		return fmt.Errorf("error pulling: %w", err)
+	if len(toPull) > 0 {
+		cmd, errBuf := h.withLogs(h.cc.pull(ctx, toPull...))
+		infoLog("pulling")
+		if err := cmd.Run(); err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
+			return fmt.Errorf("error pulling: %w", err)
+		}
 	}
 
-	cmd, errBuf = h.withLogs(h.cc.build(ctx))
+	cmd, errBuf := h.withLogs(h.cc.build(ctx))
 
 	infoLog("building")
 	if err := cmd.Run(); err != nil {
