@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/byrnedo/ezdc"
+	"github.com/lynchborg/ezdc"
 )
 
 func TestMain(m *testing.M) {
