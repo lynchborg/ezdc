@@ -11,14 +11,14 @@ import (
 func TestMain(m *testing.M) {
 
 	h := ezdc.Harness{
-		ProjectName: "ezdc-simple",
+		ProjectName: "ezdc-logfile",
 		Logs:        ezdc.FileLogWriter("./logs/docker-compose.log"),
 		Services: []ezdc.Service{
 			{
 				Name: "nats",
 				Pull: true,
 				Waiter: ezdc.TcpWaiter{
-					Port: 14222,
+					Port: 24222,
 				},
 			},
 		},

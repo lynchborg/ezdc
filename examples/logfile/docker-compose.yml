@@ -3,4 +3,4 @@ services:
   nats:
     image: nats:latest
     ports:
-      - "14222:4222"
+      - "24222:4222"
