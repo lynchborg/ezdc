@@ -140,3 +140,29 @@ func TestShouldErrIfPanicDuringRun(t *testing.T) {
 		t.Fatal("should return error")
 	}
 }
+
+func TestShouldRunOurCleanupFunc(t *testing.T) {
+
+	h := Harness{
+		ProjectName: t.Name(),
+		File:        "./whatever.yml",
+		cc:          mockCompose{},
+	}
+	cleaned := false
+	h.CleanupFunc(func(ctx context.Context) {
+		t.Log("custom cleanup")
+		cleaned = true
+	})
+
+	_, err := h.Run(context.Background(), func() int {
+		return 0
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if cleaned != true {
+		t.Fatal("cleanup func wasnt run")
+	}
+}
