@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 				Pull: true,
 				// will wait for nats to listen on localhost:4222
 				Waiter: ezdc.TcpWaiter{
-					Port: 14222,
+					Port: 4222,
 				},
 			},
 		},
