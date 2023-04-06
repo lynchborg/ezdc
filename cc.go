@@ -9,7 +9,6 @@ import (
 type ComposeFace interface {
 	Up(ctx context.Context) *exec.Cmd
 	Down(ctx context.Context) *exec.Cmd
-	Stop(ctx context.Context) *exec.Cmd
 	Pull(ctx context.Context, svc ...string) *exec.Cmd
 	Build(ctx context.Context) *exec.Cmd
 }
@@ -44,10 +43,6 @@ func (c DefaultComposeCmd) Pull(ctx context.Context, svcs ...string) *exec.Cmd {
 }
 func (c DefaultComposeCmd) Build(ctx context.Context) *exec.Cmd {
 	return c.cmd(ctx, "build")
-}
-
-func (c DefaultComposeCmd) Stop(ctx context.Context) *exec.Cmd {
-	return c.cmd(ctx, "stop", "--timeout", "0")
 }
 
 func (c DefaultComposeCmd) Up(ctx context.Context) *exec.Cmd {

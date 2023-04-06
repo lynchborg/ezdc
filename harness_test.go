@@ -166,3 +166,26 @@ func TestShouldRunOurCleanupFunc(t *testing.T) {
 		t.Fatal("cleanup func wasnt run")
 	}
 }
+
+func TestShouldErrorIfDockerComposeCommandCantStart(t *testing.T) {
+
+	h := Harness{
+		ProjectName: t.Name(),
+		File:        "./whatever.yml",
+	}
+
+	mc := mockCompose{}
+	mc.up = func(ctx context.Context) *exec.Cmd {
+		return exec.CommandContext(ctx, "assumably-nonexisting-command")
+	}
+	h.cc = mc
+
+	_, err := h.Run(context.Background(), func() int {
+		return 0
+	})
+
+	if err == nil {
+		t.Fatalf("should have errored")
+	}
+	t.Log(err)
+}
