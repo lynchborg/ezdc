@@ -1,5 +1,5 @@
 # EZDC - Easy Testing With Docker Compose
-
+[![Go Reference](https://pkg.go.dev/badge/github.com/lynchborg/ezdc.svg)](https://pkg.go.dev/github.com/lynchborg/ezdc)
 [![Go Coverage](https://github.com/lynchborg/ezdc/wiki/coverage.svg)](https://raw.githack.com/wiki/lynchborg/ezdc/coverage.html)
 
 For easily setting up tests that rely on services in a docker-compose.yml
