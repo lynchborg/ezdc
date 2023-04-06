@@ -13,7 +13,7 @@ Do you want your tests to be setup with:
   Followed by
 - `docker compose down` ?
 
-Yes? Then we've got you covered. No? Make a P.R.
+Yes? Then we've got you covered. No? Make a P.R. ⌨️ ❤️
 
 Wrap you `m.Run()` and `ezdc` will take care of spinning up your containers and checking that they're ready before
 running your tests.
@@ -42,7 +42,7 @@ func TestMain(m *testing.M) {
 				Pull: true,
 				// will wait for nats to listen on localhost:4222
 				Waiter: ezdc.TcpWaiter{
-					Port: 14222,
+					Port: 4222,
 				},
 			},
 		},
