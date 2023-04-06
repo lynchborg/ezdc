@@ -142,7 +142,7 @@ func (h Harness) startDcServices(ctx context.Context) error {
 		cmd, errBuf := h.withLogs(h.cc.Pull(ctx, toPull...))
 		infoLog("pulling")
 		if err := cmd.Run(); err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
+			_, _ = fmt.Fprintln(os.Stderr, errBuf.String())
 			return fmt.Errorf("error pulling: %w", err)
 		}
 	}
@@ -151,7 +151,7 @@ func (h Harness) startDcServices(ctx context.Context) error {
 
 	infoLog("building")
 	if err := cmd.Run(); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
+		_, _ = fmt.Fprintln(os.Stderr, errBuf.String())
 		return fmt.Errorf("error building: %w", err)
 	}
 
@@ -159,7 +159,7 @@ func (h Harness) startDcServices(ctx context.Context) error {
 
 	infoLog("starting")
 	if err := cmd.Start(); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
+		_, _ = fmt.Fprintln(os.Stderr, errBuf.String())
 		return err
 	}
 
@@ -199,7 +199,7 @@ func (h Harness) cleanup(timeout time.Duration) {
 	cmd, errBuf := h.withLogs(h.cc.Down(ctx))
 
 	if err := cmd.Run(); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
+		_, _ = fmt.Fprintln(os.Stderr, errBuf.String())
 		errorLog(fmt.Sprintf("failed to run 'down': %s", err))
 	}
 }
