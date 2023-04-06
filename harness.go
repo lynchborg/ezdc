@@ -38,38 +38,59 @@ func FileLogWriter(fileName string) *os.File {
 	return logFile
 }
 
+type crasher interface {
+	Crash(exitCode int)
+}
+
+type exitCrasher struct{}
+
+func (e exitCrasher) Crash(exitCode int) {
+	os.Exit(exitCode)
+}
+
 type Harness struct {
 	ProjectName   string    // name for the compose project
 	File          string    // path to the docker compose file
 	Services      []Service // configuration for services
 	Logs          io.Writer // where to send the docker compose logs
 	termSig       chan os.Signal
-	cc            cc
+	cc            ComposeFace
 	cleanerUppers []func(context.Context)
+	crasher       crasher
 }
 
 // Run is the entrypoint for running your testing.M.
 //
-// func TestMain(m *testing.M) {
-//     h := Harness{.....} // configure
+//	func TestMain(m *testing.M) {
+//	    h := Harness{.....} // configure
 //
-//     exitCode, err := h.Run(context.Background(), m.Run)
-//     if err != nil {
-//         panic(err)
-//     }
-//     os.Exit(exitCode)
-// }
-func (h *Harness) Run(ctx context.Context, f func() int) (int, error) {
+//	    exitCode, err := h.Run(context.Background(), m.Run)
+//	    if err != nil {
+//	        panic(err)
+//	    }
+//	    os.Exit(exitCode)
+//	}
+func (h *Harness) Run(ctx context.Context, f func() int) (code int, err error) {
 
+	ctx, cncl := context.WithCancel(ctx)
+	defer cncl()
 	h.termSig = make(chan os.Signal)
-
-	h.cc.project = h.ProjectName
-	h.cc.file = h.File
+	if h.cc == nil {
+		h.cc = DefaultComposeCmd{
+			project: h.ProjectName,
+			file:    h.File,
+		}
+	}
+	if h.crasher == nil {
+		h.crasher = exitCrasher{}
+	}
 
 	go func() {
 		<-h.termSig
+		infoLog("got os Signal")
+		cncl()
 		h.cleanup(10 * time.Second)
-		os.Exit(1)
+		h.crasher.Crash(1)
 	}()
 	signal.Notify(h.termSig, os.Interrupt)
 
@@ -84,6 +105,9 @@ func (h *Harness) Run(ctx context.Context, f func() int) (int, error) {
 	infoLog("services ready")
 
 	defer func() {
+		if panicErr := recover(); panicErr != nil {
+			err = fmt.Errorf("panic: %s", panicErr)
+		}
 		h.cleanup(10 * time.Second)
 	}()
 	return f(), nil
@@ -103,7 +127,7 @@ func (h Harness) withLogs(cmd *exec.Cmd) (*exec.Cmd, *bytes.Buffer) {
 func (h Harness) startDcServices(ctx context.Context) error {
 
 	infoLog("cleaning up lingering resources")
-	cmd, _ := h.withLogs(h.cc.down(ctx))
+	cmd, _ := h.withLogs(h.cc.Down(ctx))
 	_ = cmd.Run()
 
 	toPull := gmap(
@@ -115,7 +139,7 @@ func (h Harness) startDcServices(ctx context.Context) error {
 		})
 
 	if len(toPull) > 0 {
-		cmd, errBuf := h.withLogs(h.cc.pull(ctx, toPull...))
+		cmd, errBuf := h.withLogs(h.cc.Pull(ctx, toPull...))
 		infoLog("pulling")
 		if err := cmd.Run(); err != nil {
 			_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
@@ -123,7 +147,7 @@ func (h Harness) startDcServices(ctx context.Context) error {
 		}
 	}
 
-	cmd, errBuf := h.withLogs(h.cc.build(ctx))
+	cmd, errBuf := h.withLogs(h.cc.Build(ctx))
 
 	infoLog("building")
 	if err := cmd.Run(); err != nil {
@@ -131,7 +155,7 @@ func (h Harness) startDcServices(ctx context.Context) error {
 		return fmt.Errorf("error building: %w", err)
 	}
 
-	cmd, errBuf = h.withLogs(h.cc.up(ctx))
+	cmd, errBuf = h.withLogs(h.cc.Up(ctx))
 
 	infoLog("starting")
 	if err := cmd.Start(); err != nil {
@@ -172,7 +196,7 @@ func (h Harness) cleanup(timeout time.Duration) {
 		f(ctx)
 	}
 
-	cmd, errBuf := h.withLogs(h.cc.down(ctx))
+	cmd, errBuf := h.withLogs(h.cc.Down(ctx))
 
 	if err := cmd.Run(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, errBuf.String())
