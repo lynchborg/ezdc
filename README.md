@@ -1,5 +1,7 @@
 # EZDC - Easy Testing With Docker Compose
 
+[![Go Coverage](https://github.com/lynchborg/ezdc/wiki/coverage.svg)](https://raw.githack.com/wiki/lynchborg/ezdc/coverage.html)
+
 For easily setting up tests that rely on services in a docker-compose.yml
 
 Do you want your tests to be setup with:
