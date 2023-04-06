@@ -2,11 +2,9 @@ package simple
 
 import (
 	"context"
+	"github.com/lynchborg/ezdc"
 	"os"
 	"testing"
-	"time"
-
-	"github.com/lynchborg/ezdc"
 )
 
 func TestMain(m *testing.M) {
@@ -19,6 +17,12 @@ func TestMain(m *testing.M) {
 				Pull: true,
 				Waiter: ezdc.TcpWaiter{
 					Port: 14222,
+				},
+			},
+			{
+				Name: "echo",
+				Waiter: ezdc.HttpWaiter{
+					Port: 5678,
 				},
 			},
 		},
@@ -34,6 +38,5 @@ func TestMain(m *testing.M) {
 
 func TestNothing(t *testing.T) {
 	// whoop
-	time.Sleep(10 * time.Second)
 	t.Log("NOTHING")
 }

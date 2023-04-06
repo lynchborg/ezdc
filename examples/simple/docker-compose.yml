@@ -4,3 +4,7 @@ services:
     image: nats:latest
     ports:
       - "14222:4222"
+  echo:
+    image: ealen/echo-server
+    ports:
+      - "5678:80"
