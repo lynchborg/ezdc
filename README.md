@@ -1,5 +1,5 @@
 # EZDC - Easy Testing With Docker Compose
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lynchborg/ezdc/blob/master/LICENSE.txt)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/lynchborg/ezdc/blob/master/LICENSE)
 [![Go Reference](https://pkg.go.dev/badge/github.com/lynchborg/ezdc.svg)](https://pkg.go.dev/github.com/lynchborg/ezdc)
 [![Go Coverage](https://github.com/lynchborg/ezdc/wiki/coverage.svg)](https://raw.githack.com/wiki/lynchborg/ezdc/coverage.html)
 [![Go Report Card](https://goreportcard.com/badge/github.com/lynchborg/ezdc)](https://goreportcard.com/report/github.com/lynchborg/ezdc)
