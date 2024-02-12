@@ -32,7 +32,7 @@ package my_test
 import (
 	"os"
 	"testing"
-	"github.com/byrnedo/ezdc"
+	"github.com/lynchborg/ezdc"
 )
 
 func TestMain(m *testing.M) {
